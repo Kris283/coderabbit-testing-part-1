@@ -1,13 +1,19 @@
-CXX      = gcc
-CXXFLAGS = -Wextra -Wall
+CC       = gcc
+CFLAGS   = -O2
 TARGET   = login
+
+SRCS = login.c generated/login_function_gen.c
+OBJS = $(SRCS:.c=.o)
 
 .PHONY: all clean
 
 all: $(TARGET)
 
-$(TARGET): login.c
-	$(CXX) $(CXXFLAGS) -o $(TARGET) login.c
+$(TARGET): $(OBJS)
+	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS)
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(TARGET)
+	rm -f $(TARGET) $(OBJS)
