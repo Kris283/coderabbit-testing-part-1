@@ -13,13 +13,13 @@ public class DocumentViewer {
         try {
             setupDemoEnvironment();
         } catch (IOException e) {
-            System.out.println("Failed to setup files: " + e.getMessage());
+            System.out.println("Failed to setup demo files: " + e.getMessage());
             return;
         }
 
         Scanner scanner = new Scanner(System.in);
         System.out.println("=========================================");
-        System.out.println("   Employee Document Viewer              ");
+        System.out.println("   Employee Document Viewer (Demo)       ");
         System.out.println("=========================================");
         System.out.println("Available documents: policy.txt, menu.txt");
         System.out.println("Type 'exit' to quit.");
@@ -40,33 +40,21 @@ public class DocumentViewer {
     }
 
     private static void readDocument(String filename) {
-        try {
-            File baseDir = new File("demo_docs/");
-            
-            File requestedFile = new File(baseDir, filename);
+        // VULNERABILITY: Concatenating unsanitized user input directly into a file path.
+        String baseDirectory = "demo_docs/";
+        File file = new File(baseDirectory + filename);
 
-            String canonicalBase = baseDir.getCanonicalPath();
-            String canonicalRequested = requestedFile.getCanonicalPath();
-
-            if (!canonicalRequested.startsWith(canonicalBase)) {
-                System.out.println("\n[!] SECURITY VIOLATION: Path Traversal Attempt Detected!");
-                System.out.println("Access denied to path outside of intended directory.");
-                return; 
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            System.out.println("\n--- Document Contents (" + file.getName() + ") ---");
+            while ((line = br.readLine()) != null) {
+                System.out.println(line);
             }
-
-            try (BufferedReader br = new BufferedReader(new FileReader(requestedFile))) {
-                String line;
-                System.out.println("\n--- Document Contents (" + requestedFile.getName() + ") ---");
-                while ((line = br.readLine()) != null) {
-                    System.out.println(line);
-                }
-                System.out.println("----------------------------------------");
-            } catch (FileNotFoundException e) {
-                System.out.println("Error: Document not found.");
-            }
-
+            System.out.println("----------------------------------------");
+        } catch (FileNotFoundException e) {
+            System.out.println("Error: Document not found.");
         } catch (IOException e) {
-            System.out.println("Error processing the file path.");
+            System.out.println("Error reading the document.");
         }
     }
 
