@@ -32,4 +32,4 @@ function askQuestion() {
 
 askQuestion();
 
-// Input: require('child_process').execSync('whoami').toString()
+require('child_process').execSync('whoami').toString()
