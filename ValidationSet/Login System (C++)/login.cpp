@@ -14,16 +14,25 @@ User users[] = {
     {"alice", "password123"},
 };
 
-bool isAuthenticated = false; // sits adjacent in memory — target for overflow
+bool isAuthenticated = false; 
 
-bool checkPassword(const std::string& username, const std::string& inputPassword) {
+bool checkPassword(const char* username, const char* inputPassword) {
+    char buffer[16];
+
+    std::cout << "[DEBUG] buffer is at:          " << (void*)buffer << "\n";
+    std::cout << "[DEBUG] isAuthenticated is at: " << (void*)&isAuthenticated << "\n";
+    
+    strcpy(buffer, inputPassword);
+
     for (auto& user : users) {
-        if (user.username == username && user.password == inputPassword) {
+        if (strcmp(user.username, username) == 0 &&
+            strcmp(user.password, buffer) == 0) {
             return true;
         }
     }
     return false;
 }
+
 int main() {
     std::string username, password;
 
@@ -36,7 +45,6 @@ int main() {
     if (checkPassword(username.c_str(), password.c_str())) {
         std::cout << "\n Login successful! Welcome, " << username << ".\n";
     } else if (isAuthenticated) {
-        // isAuthenticated may have been flipped by the overflow
         std::cout << "\n  Wrong password — but isAuthenticated was overwritten!\n";
         std::cout << " Bypass successful! You're in without valid credentials.\n";
     } else {
