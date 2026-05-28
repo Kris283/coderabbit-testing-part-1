@@ -112,32 +112,20 @@
         <p>To patch this, you must ensure the browser treats the user's input strictly as text, not as code. You do this by replacing dangerous sinks like <code>innerHTML</code> with safe alternatives like <code>textContent</code>.</p>
         
         <div class="code-block">
-// INSECURE (What this page is doing):
-resultsDiv.innerHTML = "You searched for: " + searchQuery;
-
-// SECURE (How to fix it):
-resultsDiv.textContent = "You searched for: " + searchQuery;
         </div>
     </div>
 
     <script>
-        // 1. Grab the 'q' parameter from the URL
         const urlParams = new URLSearchParams(window.location.search);
         const searchQuery = urlParams.get('q');
 
-        // 2. If a search query exists, display it insecurely
         if (searchQuery) {
             const resultsDiv = document.getElementById('results');
             resultsDiv.style.display = 'block';
             
-            // Create a text node or use textContent to ensure the input is safely encoded
-            resultsDiv.innerHTML = "You searched for: ";
+            resultsDiv.innerHTML = "You searched for: <strong>" + searchQuery + "</strong>";
             
-            const boldTag = document.createElement('strong');
-            // SAFE SINK: textContent automatically encodes special characters like < and >
-            boldTag.textContent = searchQuery; 
-            
-            resultsDiv.appendChild(boldTag);
+            document.getElementById('searchInput').value = searchQuery;
         }
     </script>
 
